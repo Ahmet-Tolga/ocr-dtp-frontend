@@ -1,0 +1,114 @@
+/* sidebar.css */
+
+/* Genel sidebar stili */
+.sidebar {
+    background-color: #2c3e50;
+    width: 20%;
+    height: 100vh;
+    color: #ecf0f1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: width 0.3s;
+}
+
+/* Ana içerik */
+.main-content {
+    margin-left: 20%;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+/* Sidebar kapalı olduğunda */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+/* Sidebar kapalı olduğunda ana içerik */
+.sidebar.collapsed + .main-content {
+    margin-left: 60px;
+}
+
+/* Menü başlığı */
+.pc-caption {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 1px solid #34495e;
+    color: #bdc3c7;
+}
+
+/* Menü öğesi */
+.pc-item {
+    list-style-type: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.pc-item a.pc-link {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.pc-item.active,
+.pc-item:hover {
+    background-color: #34495e;
+}
+
+/* Menü ikonu */
+.pc-micon {
+    margin-right: 10px;
+}
+
+/* Alt menü */
+.pc-hasmenu .pc-submenu {
+    display: none;
+    padding-left: 20px;
+}
+
+.pc-hasmenu .pc-submenu.open {
+    display: block;
+}
+
+.pc-hasmenu .pc-arrow {
+    margin-left: auto;
+    transition: transform 0.3s;
+}
+
+.pc-hasmenu.pc-trigger .pc-arrow {
+    transform: rotate(90deg);
+}
+
+/* Alt menü öğesi */
+.pc-submenu .pc-item {
+    padding: 5px 20px;
+}
+
+.pc-submenu .pc-item a.pc-link {
+    font-size: 0.9em;
+    color: #bdc3c7;
+}
+
+.pc-submenu .pc-item.active,
+.pc-submenu .pc-item:hover {
+    background-color: #34495e;
+}
+
+/* Alt menü alt öğesi */
+.pc-submenu .pc-submenu .pc-item {
+    padding-left: 30px;
+}
+
+/* Badge */
+.pc-badge {
+    background-color: #e74c3c;
+    color: #ecf0f1;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 0.8em;
+    margin-left: auto;
+}
