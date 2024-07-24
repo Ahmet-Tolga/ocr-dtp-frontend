@@ -44,9 +44,9 @@ const App = () => {
                         <Route path="/profile" element={<ProfilePage />} />
                         <Route path="/projects" element={<UserCards />} />
                         <Route path="/offerPage" element={<Offers />} />
-                        <Route path="/offer" element={<OfferPage />} />
                         <Route path="/payment" element={<PaymentPage></PaymentPage>} />
                         <Route path="/forgetPassword" element={<ForgotPassowordPage />} />
+                        <Route path="/offer" element={<OfferPage />} />
                     </Routes>
                 </Col>
             </Row>

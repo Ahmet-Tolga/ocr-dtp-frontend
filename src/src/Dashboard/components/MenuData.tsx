@@ -18,7 +18,7 @@ const menuItems = [
         type: "HASHMENU", id: 1, label: "Payment", icon: "ph-duotone ph-gauge", dataPage: null,link:"/payment"  
     },
     {
-        type: "HASHMENU", id: 1, label: "Log out", icon: "ph-duotone ph-user-circle", dataPage: null,link:"/logout"  
+        type: "HASHMENU", id: 1, label: "Log out", icon: "ph-duotone ph-user-circle", dataPage: null,link:"http://localhost:8002/api/v1/logout"  
     }
 ];
 

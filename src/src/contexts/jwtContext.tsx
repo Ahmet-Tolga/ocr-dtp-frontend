@@ -2,13 +2,13 @@ import { createContext, useEffect, useReducer, ReactElement } from 'react';
 
 // third-party
 import { Chance } from 'chance';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from "jwt-decode";
 
 // reducer - state management
 import { FORGOT_PASSWORD, LOGIN, LOGOUT } from '../store/Actions/AuthAction';
 import authReducer from '../store/reducers/AuthReducer';
 
-import axios from 'axios';
+import axios from '../utils/axios';
 import { KeyedObject } from "../store/Types/Root";
 import { AuthProps, JWTContextType } from '../store/Types/AuthType';
 
@@ -63,21 +63,21 @@ const JWTContext = createContext<JWTContextType | null>(null);
  */
 export const JWTProvider = ({ children }: { children: ReactElement }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-
+    console.log('inside jwt')
   // Token yenileme timer'ını tutmak için bir değişken
   let refreshTimer: NodeJS.Timeout;
 
   const startRefreshTimer = (token: string) => {
     const decodedToken = jwtDecode<KeyedObject>(token);
+    console.log("token",decodedToken);
     const currentTime = Math.floor(Date.now() / 1000);
     const timeUntilExpiry = (decodedToken.exp - currentTime) * 1000; // milliseconds
 
     // Süre dolduğunda refresh işlemini başlat
     refreshTimer = setTimeout(async () => {
       const refreshToken = localStorage.getItem('refreshToken');
-      const rememberMe = localStorage.getItem('rememberMe');
 
-      if (rememberMe === 'true' && refreshToken) {
+      if (refreshToken) {
         try {
           const response = await axios.post('/api/v1/auth/refresh', { refreshToken });
           const { accessToken } = response.data.data;
@@ -106,7 +106,6 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
     const init = async () => {
       try {
         const serviceToken = localStorage.getItem('serviceToken');
-        const rememberMe = localStorage.getItem('rememberMe');
         const refreshToken = localStorage.getItem('refreshToken');
 
         if (serviceToken && verifyToken(serviceToken)) {
@@ -116,7 +115,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
           localStorage.setItem('userId', user.id);
           dispatch({ type: LOGIN, payload: { isLoggedIn: true, user } });
           startRefreshTimer(serviceToken);
-        } else if (rememberMe === 'true' && refreshToken) {
+        } else if (refreshToken) {
           try {
             const response = await axios.post('/api/v1/auth/refresh', { refreshToken });
             const { accessToken } = response.data.data;
@@ -151,6 +150,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
   const login = async (email: string, password: string) => {
     const response = await axios.post('/api/v1/auth/login', { email, password });
     const { accessToken, refreshToken } = response.data.data;
+    console.log(accessToken, refreshToken);
     localStorage.setItem('refreshToken', refreshToken);
     if (accessToken) {
       setSession(accessToken);
