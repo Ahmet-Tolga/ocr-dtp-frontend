@@ -8,6 +8,8 @@ interface ProjectGuestCreateDto {
             sourceLang: string;
             targetLang: string;
         };
+        ocr:boolean;
+        dtp:boolean;
     },
     email: string;
 }
@@ -18,6 +20,8 @@ interface ProjectLoginDto {
         sourceLang: string;
         targetLang: string;
     };
+    ocr:boolean;
+    dtp:boolean;
 }
 
 interface FileCreateDto {

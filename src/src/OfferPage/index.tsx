@@ -7,21 +7,22 @@ import BaseNavbar from "../Common/components/BaseComponent";
 import AuthGuard from "../utils/route-guard/authGuard";
 import useAuth from "../hooks/useAuth";
 import { GetAllProjectsThunk, GetProjectsByUserIDThunk } from "../store/Thunks/UploadProjectThunk";
-import { AppDispatch } from "../store/store"; 
+import { AppDispatch } from "../store/store";
+import ListView from "./components/ListView";
 
 
 const Offers: React.FC = () => {
-    const [projects,setProjects]=useState<any[]>([]);
+    const [projects, setProjects] = useState<any[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const handleAcceptOffer = (offerId: number, offerName: string, offerPrice: number, services: string[]) => {
         dispatch(acceptOffer(offerId, offerName, offerPrice, services));
-        navigate("/payment"); 
+        navigate("/payment");
     };
 
-    const handleGiveOffer=(email:any,userId:any)=>{
-        navigate("/giveOffer",{state:{email:email,userId:userId}});
+    const handleGiveOffer = (email: any, userId: any) => {
+        navigate("/giveOffer", { state: { email: email, userId: userId } });
     }
 
     const { user } = useAuth();
@@ -56,7 +57,7 @@ const Offers: React.FC = () => {
                 console.error("User ID is not defined");
             }
         };
-        
+
 
         fetchProjects();
     }, [user, dispatch]);
@@ -66,7 +67,7 @@ const Offers: React.FC = () => {
             <AuthGuard>
                 <>
                     <BaseNavbar NavbarTitle="All Offers" />
-                    <Row>
+                    {user?.role=="admin" ? <ListView projects={projects}></ListView>: <Row>
                         {projects.map((item: any, index: number) => (
                             <Col md={6} xl={4} key={index}>
                                 <Card className="user-card">
@@ -80,43 +81,38 @@ const Offers: React.FC = () => {
                                         <div className="chat-avtar card-user-image">
                                         </div>
                                         <div className="d-flex" style={{ marginTop: "40px" }}>
-                                            {user?.role=="admin" ? <div className="flex-shrink-0">
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm ms-1"
-                                                    onClick={() => handleGiveOffer(item.user.email,item.user.id)}
-                                                >
-                                                    Give Offer
-                                                </button>
-                                            </div>  : <div className="flex-shrink-0">
-                                                <button className="btn btn-primary btn-sm">Reject offer</button>&nbsp;
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm ms-1"
-                                                    onClick={() => handleAcceptOffer(item.id, item.offerName, item.offerPrice, item.services)}
-                                                >
-                                                    Accept offer
-                                                </button>
-                                            </div>}
-                                        </div>
-                                        <div>from this email {item.user.email}</div>
+                                            <div className="flex-shrink-0">
+                                                <div className="flex-shrink-0">
+                                                    <button className="btn btn-primary btn-sm">Reject offer</button>&nbsp;
+                                                    <button
+                                                        className="btn btn-outline-secondary btn-sm ms-1"
+                                                        onClick={() => handleAcceptOffer(item.id, item.offerName, item.offerPrice, item.services)}
+                                                    >
+                                                        Accept offer
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>from this email {item.user.email}</div>
 
-                                        <div className="saprator my-2">
-                                            <span>Services</span>
-                                        </div>
-                                        <div className="text-center">
-                                            {/* {item.services.map((service: string, idx: number) => (
+                                            <div className="saprator my-2">
+                                                <span>Services</span>
+                                            </div>
+                                            <div className="text-center">
+                                                {/* {item.services.map((service: string, idx: number) => (
                                                 <span key={idx} className="badge bg-light-secondary border rounded-pill border-secondary bg-transparent f-14 me-1 mt-1">
                                                     {service}
                                                 </span>
                                             ))} */}
-                                        </div>
-                                        <div className="saprator my-2">
-                                            <span>Waiting for response</span>
+                                            </div>
+                                            <div className="saprator my-2">
+                                                <span>Waiting for response</span>
+                                            </div>
                                         </div>
                                     </Card.Body>
                                 </Card>
                             </Col>
                         ))}
-                    </Row>
+                    </Row> }
                 </>
             </AuthGuard>
         </React.Fragment>

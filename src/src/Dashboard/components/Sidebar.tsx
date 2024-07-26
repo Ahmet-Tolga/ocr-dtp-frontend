@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./sidebar.css";
 import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
     const router = useLocation();
+    const navigate = useNavigate();
     const [openMenu, setOpenMenu] = useState<any>({});
-    const { user,isLoggedIn } = useAuth(); 
-    console.log("login",isLoggedIn);
+    const { user, isLoggedIn } = useAuth();
+    const {logout}=useAuth();
 
     // Menü öğelerini burada tanımlıyoruz
     const dashboardMenu = {
@@ -23,13 +24,13 @@ const Sidebar = () => {
         id: 4, label: "Create new Offer", icon: "ph-duotone ph-gear-six", link: "/offer", visible: user?.role == "customer" || !isLoggedIn
     };
     const profileMenu = {
-        id: 5, label: "Profile", icon: "ph-duotone ph-user-circle", link: "/profile", visible: isLoggedIn && user?.role!="admin"
+        id: 5, label: "Profile", icon: "ph-duotone ph-user-circle", link: "/profile", visible: isLoggedIn && user?.role !== "admin"
     };
     const paymentMenu = {
-        id: 6, label: "Payment", icon: "ph-duotone ph-gauge", link: "/payment", visible: isLoggedIn && user?.role!="customer"
+        id: 6, label: "Payment", icon: "ph-duotone ph-gauge", link: "/payment", visible: isLoggedIn && user?.role !== "customer"
     };
     const logoutMenu = {
-        id: 7, label: "Log out", icon: "ph-duotone ph-user-circle", link: "http://localhost:8002/api/v1/logout", visible: isLoggedIn
+        id: 7, label: "Log out", icon: "ph-duotone ph-user-circle", visible: isLoggedIn
     };
 
     const menuItems = [
@@ -72,6 +73,11 @@ const Sidebar = () => {
 
     const isMenuActive = (menuItem: any) => {
         return router.pathname === menuItem.link;
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
     };
 
     return (
@@ -140,12 +146,12 @@ const Sidebar = () => {
                 )}
                 {logoutMenu.visible && (
                     <li className={`pc-item ${isMenuActive(logoutMenu) ? "active" : ""}`}>
-                        <a href={logoutMenu.link} className="pc-link">
+                        <span className="pc-link" onClick={handleLogout}>
                             <span className="pc-micon">
                                 <i className={`${logoutMenu.icon}`}></i>
                             </span>
                             <span className="pc-mtext">{logoutMenu.label}</span>
-                        </a>
+                        </span>
                     </li>
                 )}
             </ul>

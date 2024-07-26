@@ -13,6 +13,8 @@ interface ProjectCreateDto {
             sourceLang: string;
             targetLang: string;
         };
+        ocr:boolean;
+        dtp:boolean;
     }
     email: string
 }
@@ -128,7 +130,9 @@ const FormInputs: React.FC = () => {
             const projectData: ProjectCreateDto = {
                 project: {
                     fileIds: [uploadedFile.id],
-                    translation: isChecked ? { sourceLang: "en", targetLang: selectedLanguages.join(", ") } : undefined
+                    translation: isChecked ? { sourceLang: "en", targetLang: selectedLanguages.join(", ") } : undefined,
+                    ocr:isOcrChecked ? true : false,
+                    dtp:isDtpChecked ? true :false
                 },
                 email: !isLoggedIn ? emailValue : user?.email || "" 
             };
