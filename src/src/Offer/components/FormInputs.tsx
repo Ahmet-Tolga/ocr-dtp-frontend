@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Form, Button, Card, Alert, Col } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
-import { createProjectThunk, uploadFileThunk, associateFileWithProjectThunk } from '../../store/Thunks/UploadProjectThunk';
+import { createLoginedProjectThunk, createProjectThunk, uploadFileThunk } from '../../store/Thunks/UploadProjectThunk';
+import useAuth from "../../hooks/useAuth";
 
 // Define the types for your thunk payloads
 interface ProjectCreateDto {
@@ -27,6 +28,8 @@ const FormInputs: React.FC = () => {
     const [imageResolution, setImageResolution] = useState<string | null>(null);
     const [fileSize, setFileSize] = useState<string | null>(null);
     const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [isOcrChecked, setIsOcrChecked] = useState<boolean>(false);
+    const [isDtpChecked, setIsDtpChecked] = useState<boolean>(false);
     const [emailValue, setEmailValue] = useState<string>("");
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
     const allLanguages = ["en", "es", "fr", "tr", "ch", "jp", "gr"];
@@ -64,9 +67,11 @@ const FormInputs: React.FC = () => {
             }
         }
     }, [selectedFile]);
+    const {isLoggedIn,user}=useAuth();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
+        console.log("file change and isloggedin=",isLoggedIn);
         if (file) {
             setSelectedFile(file);
             setVideoDuration(null);
@@ -77,6 +82,14 @@ const FormInputs: React.FC = () => {
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsChecked(event.target.checked);
+    };
+
+    const handleOcrboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsOcrChecked(event.target.checked);
+    };
+
+    const handleDtpboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsDtpChecked(event.target.checked);
     };
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,33 +113,42 @@ const FormInputs: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-
-
+    
         try {
             const formData = new FormData();
             if (!selectedFile) {
                 // add form error
-                return
+                return;
             }
             formData.append("file", selectedFile);
+            console.log("Form data=",formData);
             const uploadedFile: UploadedFileDto = await dispatch(uploadFileThunk(formData)).unwrap();
+            console.log(uploadedFile);
 
             const projectData: ProjectCreateDto = {
                 project: {
                     fileIds: [uploadedFile.id],
                     translation: isChecked ? { sourceLang: "en", targetLang: selectedLanguages.join(", ") } : undefined
                 },
-                email: emailValue
+                email: !isLoggedIn ? emailValue : user?.email || "" 
             };
 
-            const project = await dispatch(createProjectThunk(projectData)).unwrap();
-
+            console.log("Projet that will submited",projectData);
+            if(isLoggedIn){
+                const project = await dispatch(createLoginedProjectThunk(projectData.project)).unwrap();
+                console.log(project);
+            }
+            else{
+                const project = await dispatch(createProjectThunk(projectData)).unwrap();
+                console.log(project);
+            }
+    
             alert("Project and file uploaded successfully!");
         } catch (error) {
             console.error("Error uploading project and file:", error);
         }
     };
+    
 
     return (
         <React.Fragment>
@@ -141,14 +163,13 @@ const FormInputs: React.FC = () => {
                                 <i className="ti ti-info-circle h2 f-w-400 mb-0"></i>
                             </div>
                             <div className="flex-grow-1 ms-3">
-                                Here are the different input types you can use in HTML. Check more at
-                                <a href="https://www.w3schools.com/html/html_form_input_types.asp" rel="nofollow">W3Schools</a>
+                                To send your email to managers,you have to enter your mail and upload file.
                             </div>
                         </div>
                     </Alert>
                     <div className="mb-5">
                         <Form onSubmit={handleSubmit}>
-                            <Form.Group>
+                            {!isLoggedIn && <Form.Group>
                                 <Form.Label htmlFor="email">Email</Form.Label>
                                 <Form.Control
                                     type="email"
@@ -157,7 +178,7 @@ const FormInputs: React.FC = () => {
                                     value={emailValue}
                                     onChange={(e) => setEmailValue(e.target.value)}
                                 />
-                            </Form.Group>
+                            </Form.Group>}
 
                             <Form.Group>
                                 <Form.Label htmlFor="demo-input-file">File</Form.Label>
@@ -173,12 +194,14 @@ const FormInputs: React.FC = () => {
                                     id="ocr"
                                     label="OCR"
                                     className="mb-2"
+                                    onChange={handleOcrboxChange}
                                 />
                                 <Form.Check
                                     type="checkbox"
                                     id="dtp"
                                     label="DTP"
                                     className="mb-2"
+                                    onChange={handleDtpboxChange}
                                 />
                                 <Form.Check
                                     type="checkbox"
@@ -244,7 +267,7 @@ const FormInputs: React.FC = () => {
                             )}
 
                             <div style={{ marginTop: "30px", display: "flex", width: "30%", alignItems: "center", justifyContent: "space-between" }}>
-                                <Button variant="primary" type="submit">
+                                <Button variant="primary" type="submit" className={(selectedFile && (emailValue || isLoggedIn) && (isOcrChecked || isDtpChecked || isChecked)) ? "" : "disabled"}>
                                     Submit
                                 </Button>
                                 <Button variant="secondary" type="button" onClick={handleReset}>

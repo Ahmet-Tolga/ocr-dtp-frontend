@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../../utils/axios';
 
 interface AuthDto {
     email: string;
@@ -18,7 +18,7 @@ export const loginThunk = createAsyncThunk<LoginResponse, AuthDto, { rejectValue
     'login',
     async (authDto: AuthDto, { rejectWithValue }) => {
         try {
-            const response = await axios.post<LoginResponse>('http://localhost:8002/api/v1/auth/login', authDto);
+            const response = await axios.post<LoginResponse>('/api/v1/auth/login', authDto);
             return response.data;
         } catch (error: any) {
             if (error.response && error.response.data) {

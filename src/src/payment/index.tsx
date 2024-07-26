@@ -5,63 +5,67 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 
 import { Card, Col, Nav, Row, Tab } from "react-bootstrap";
+import AuthGuard from "../utils/route-guard/authGuard";
 
 const PaymentPage = () => {
 
     const offer = useSelector((state: RootState) => state.offer);
-    
+
     // Determine if there's an active offer
     const hasOffer = offer.offerId > 0;
 
     console.log('Offer state:', offer);
     return (
         <React.Fragment>
-            <Row>
-                <Tab.Container defaultActiveKey="ecomtab-1">
-                    <Col sm={12}>
-                        <Card>
-                            <Card.Body className="p-0">
-                                <Nav as="ul" className="nav-tabs checkout-tabs mb-0" id="myTab" role="tablist">
-                                    <Nav.Item as="li">
-                                        <Nav.Link eventKey="ecomtab-1" id="ecomtab-tab-1" href="#ecomtab-1" role="tab">
-                                            <div className="d-flex align-items-center">
-                                                <div className="flex-shrink-0">
-                                                    <div className="avtar avtar-s">
-                                                        <i className="ti ti-shopping-cart"></i>
+            <AuthGuard>
+                <>
+                    <Row>
+                        <Tab.Container defaultActiveKey="ecomtab-1">
+                            <Col sm={12}>
+                                <Card>
+                                    <Card.Body className="p-0">
+                                        <Nav as="ul" className="nav-tabs checkout-tabs mb-0" id="myTab" role="tablist">
+                                            <Nav.Item as="li">
+                                                <Nav.Link eventKey="ecomtab-1" id="ecomtab-tab-1" href="#ecomtab-1" role="tab">
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="flex-shrink-0">
+                                                            <div className="avtar avtar-s">
+                                                                <i className="ti ti-shopping-cart"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex-grow-1 ms-2">
+                                                            <h5 className="mb-0">Cart Details</h5>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="flex-grow-1 ms-2">
-                                                    <h5 className="mb-0">Cart Details</h5>
-                                                </div>
-                                            </div>
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                  
-                                    <Nav.Item as="li">
-                                        <Nav.Link className={hasOffer ? '' : 'disabled'} eventKey="ecomtab-3" id="ecomtab-tab-3" href="#ecomtab-3" role="tab">
-                                            <div className="d-flex align-items-center">
-                                                <div className="flex-shrink-0">
-                                                    <div className="avtar avtar-s">
-                                                        <i className="ti ti-credit-card"></i>
-                                                    </div>
-                                                </div>
-                                                <div className="media-body ms-2">
-                                                    <h5 className="mb-0">Payment</h5>
-                                                </div>
-                                            </div>
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                </Nav>
-                            </Card.Body>
-                        </Card>
-                        <Tab.Content>
-                            <CartDetails />
-                            <Payment />
-                        </Tab.Content>
-                    </Col>
-                </Tab.Container>
-            </Row>
+                                                </Nav.Link>
+                                            </Nav.Item>
 
+                                            <Nav.Item as="li">
+                                                <Nav.Link className={hasOffer ? '' : 'disabled'} eventKey="ecomtab-3" id="ecomtab-tab-3" href="#ecomtab-3" role="tab">
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="flex-shrink-0">
+                                                            <div className="avtar avtar-s">
+                                                                <i className="ti ti-credit-card"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div className="media-body ms-2">
+                                                            <h5 className="mb-0">Payment</h5>
+                                                        </div>
+                                                    </div>
+                                                </Nav.Link>
+                                            </Nav.Item>
+                                        </Nav>
+                                    </Card.Body>
+                                </Card>
+                                <Tab.Content>
+                                    <CartDetails />
+                                    <Payment />
+                                </Tab.Content>
+                            </Col>
+                        </Tab.Container>
+                    </Row>
+                </>
+            </AuthGuard>
         </React.Fragment >
     );
 }

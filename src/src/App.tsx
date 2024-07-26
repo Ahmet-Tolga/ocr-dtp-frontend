@@ -12,6 +12,7 @@ import Offers from "./OfferPage/index";
 import Sidebar from "./Dashboard/components/Sidebar";
 import TopBar from "./Navbar";
 import PaymentPage from "./payment";
+import GiveOffer from "./GiveOffer";
 
 const App = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -47,6 +48,7 @@ const App = () => {
                         <Route path="/payment" element={<PaymentPage></PaymentPage>} />
                         <Route path="/forgetPassword" element={<ForgotPassowordPage />} />
                         <Route path="/offer" element={<OfferPage />} />
+                        <Route path="/giveOffer" element={<GiveOffer />} />
                     </Routes>
                 </Col>
             </Row>

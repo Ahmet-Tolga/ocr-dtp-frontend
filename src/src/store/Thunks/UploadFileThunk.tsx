@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../../utils/axios';
 
 export const createFileThunk = createAsyncThunk(
   'fileUpload/uploadFile',
@@ -7,7 +7,7 @@ export const createFileThunk = createAsyncThunk(
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await axios.post('http://localhost:8002/api/v1/files', formData, {
+    const response = await axios.post('/api/v1/files', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

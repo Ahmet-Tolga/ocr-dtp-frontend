@@ -1,19 +1,46 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-import FeatherIcon from "feather-icons-react";
-import { menuItems } from "./MenuData";
 import "./sidebar.css";
+import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
     const router = useLocation();
     const [openMenu, setOpenMenu] = useState<any>({});
+    const { user,isLoggedIn } = useAuth(); 
+    console.log("login",isLoggedIn);
 
-    const handleMenuClick = (id: any) => {
-        setOpenMenu((prevOpenMenu: any) => ({
-            ...prevOpenMenu,
-            [id]: !prevOpenMenu[id]
-        }));
+    // Menü öğelerini burada tanımlıyoruz
+    const dashboardMenu = {
+        id: 1, label: "Dashboard", icon: "ph-duotone ph-gauge", link: "/", visible: true
     };
+    const projectsMenu = {
+        id: 2, label: "Projects", icon: "ph-duotone ph-calendar-blank", link: "/projects", visible: isLoggedIn
+    };
+    const offersMenu = {
+        id: 3, label: "Offers", icon: "ph-duotone ph-flag", link: "/offerPage", visible: isLoggedIn
+    };
+    const createOfferMenu = {
+        id: 4, label: "Create new Offer", icon: "ph-duotone ph-gear-six", link: "/offer", visible: user?.role == "customer" || !isLoggedIn
+    };
+    const profileMenu = {
+        id: 5, label: "Profile", icon: "ph-duotone ph-user-circle", link: "/profile", visible: isLoggedIn && user?.role!="admin"
+    };
+    const paymentMenu = {
+        id: 6, label: "Payment", icon: "ph-duotone ph-gauge", link: "/payment", visible: isLoggedIn && user?.role!="customer"
+    };
+    const logoutMenu = {
+        id: 7, label: "Log out", icon: "ph-duotone ph-user-circle", link: "http://localhost:8002/api/v1/logout", visible: isLoggedIn
+    };
+
+    const menuItems = [
+        dashboardMenu,
+        projectsMenu,
+        offersMenu,
+        createOfferMenu,
+        profileMenu,
+        paymentMenu,
+        logoutMenu
+    ];
 
     useEffect(() => {
         const initialOpenMenu: any = {};
@@ -49,73 +76,78 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar">
-            <h2 style={{color:"white",textAlign:"center",marginTop:"30px"}}>Services</h2>
+            <h2 style={{ color: "white", textAlign: "center", marginTop: "30px" }}>Services</h2>
             <ul>
-                {(menuItems || []).map((item: any, key: any) => (
-                    <React.Fragment key={key}>
-                        {!item["isHeader"] ? (
-                            <>
-                                {!item.submenu ? (
-                                    <li className={`pc-item ${isMenuActive(item) ? "active" : ""}`}>
-                                        <Link to={item.link && item.link} data-page="index" className="pc-link">
-                                            <span className="pc-micon">
-                                                <i className={`${item.icon}`}></i>
-                                            </span>
-                                            <span className="pc-mtext">{item.label}</span>
-                                            {item.badge ? (
-                                                <span className="pc-badge">{item.badge}</span>
-                                            ) : (
-                                                ""
-                                            )}
-                                        </Link>
-                                    </li>
-                                ) : (
-                                    <li className={`pc-item pc-hasmenu ${openMenu[item.id] || item.submenu?.some((subItem: any) => isMenuActive(subItem)) ? "pc-trigger active" : ""}`}>
-                                        <span className="pc-link" onClick={() => handleMenuClick(item.id)}>
-                                            <span className="pc-micon">
-                                                <i className={`${item.icon}`}></i>
-                                            </span>
-                                            <span className="pc-mtext">{item.label}</span>
-                                            <span className="pc-arrow">
-                                                <FeatherIcon icon="chevron-right" />
-                                            </span>
-                                        </span>
-                                        <ul className={`pc-submenu ${openMenu[item.id] ? "open" : ""}`}>
-                                            {(item.submenu || []).map((subItem: any, key: any) => (
-                                                !subItem.submenu ? (
-                                                    <li className={`pc-item ${isMenuActive(subItem) ? "active" : ""}`} key={key}>
-                                                        <Link className="pc-link" to={subItem.link || "#"} data-page={subItem.dataPage}>
-                                                            {subItem.label}
-                                                        </Link>
-                                                    </li>
-                                                ) : (
-                                                    <li className={`pc-item ${isMenuActive(subItem) ? "active" : ""}`} key={key}>
-                                                        <Link className="pc-link" to={subItem.link || "#"} data-page={subItem.dataPage}>
-                                                            {subItem.label}
-                                                        </Link>
-                                                        <ul className="pc-submenu" style={{ display: openMenu[item.id] ? "block" : "none" }}>
-                                                            {(subItem.submenu || []).map((childItem: any, key: any) => (
-                                                                <li className="pc-item" key={key}>
-                                                                    <Link className="pc-link" target="_blank" to="/pages/login-v1">
-                                                                        {childItem.label}
-                                                                    </Link>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </li>
-                                                )
-                                            ))}
-                                        </ul>
-                                    </li>
-                                )}
-                            </>
-                        ) : (
-                            <li className="pc-item pc-caption">
-                                <label>{item.label}</label>
-                            </li>
-                        )}
-                    </React.Fragment>
-                ))}
+                {dashboardMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(dashboardMenu) ? "active" : ""}`}>
+                        <Link to={dashboardMenu.link} data-page="index" className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${dashboardMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{dashboardMenu.label}</span>
+                        </Link>
+                    </li>
+                )}
+                {projectsMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(projectsMenu) ? "active" : ""}`}>
+                        <Link to={projectsMenu.link} data-page="index" className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${projectsMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{projectsMenu.label}</span>
+                        </Link>
+                    </li>
+                )}
+                {offersMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(offersMenu) ? "active" : ""}`}>
+                        <Link to={offersMenu.link} data-page="index" className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${offersMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{offersMenu.label}</span>
+                        </Link>
+                    </li>
+                )}
+                {createOfferMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(createOfferMenu) ? "active" : ""}`}>
+                        <Link to={createOfferMenu.link} data-page="index" className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${createOfferMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{createOfferMenu.label}</span>
+                        </Link>
+                    </li>
+                )}
+                {profileMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(profileMenu) ? "active" : ""}`}>
+                        <Link to={profileMenu.link} data-page="index" className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${profileMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{profileMenu.label}</span>
+                        </Link>
+                    </li>
+                )}
+                {paymentMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(paymentMenu) ? "active" : ""}`}>
+                        <Link to={paymentMenu.link} data-page="index" className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${paymentMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{paymentMenu.label}</span>
+                        </Link>
+                    </li>
+                )}
+                {logoutMenu.visible && (
+                    <li className={`pc-item ${isMenuActive(logoutMenu) ? "active" : ""}`}>
+                        <a href={logoutMenu.link} className="pc-link">
+                            <span className="pc-micon">
+                                <i className={`${logoutMenu.icon}`}></i>
+                            </span>
+                            <span className="pc-mtext">{logoutMenu.label}</span>
+                        </a>
+                    </li>
+                )}
             </ul>
         </div>
     );

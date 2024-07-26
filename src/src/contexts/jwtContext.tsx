@@ -1,16 +1,16 @@
 import { createContext, useEffect, useReducer, ReactElement } from 'react';
 
-// third-party
 import { Chance } from 'chance';
 import {jwtDecode} from "jwt-decode";
 
-// reducer - state management
 import { FORGOT_PASSWORD, LOGIN, LOGOUT } from '../store/Actions/AuthAction';
 import authReducer from '../store/reducers/AuthReducer';
 
 import axios from '../utils/axios';
+import { BASE_URL } from '../utils/axios';
 import { KeyedObject } from "../store/Types/Root";
 import { AuthProps, JWTContextType } from '../store/Types/AuthType';
+// import Loading from '../Loading/Loading';
 
 const chance = new Chance();
 
@@ -79,7 +79,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
 
       if (refreshToken) {
         try {
-          const response = await axios.post('/api/v1/auth/refresh', { refreshToken });
+          const response = await axios.post(`${BASE_URL}/api/v1/auth/refresh`, { refreshToken });
           const { accessToken } = response.data.data;
           if (accessToken) {
             localStorage.setItem('serviceToken', accessToken);
@@ -110,14 +110,14 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
 
         if (serviceToken && verifyToken(serviceToken)) {
           setSession(serviceToken);
-          const response = await axios.get('/api/v1/auth/me');
+          const response = await axios.get(`${BASE_URL}/api/v1/auth/me`);
           const user = response.data.data;
           localStorage.setItem('userId', user.id);
           dispatch({ type: LOGIN, payload: { isLoggedIn: true, user } });
           startRefreshTimer(serviceToken);
         } else if (refreshToken) {
           try {
-            const response = await axios.post('/api/v1/auth/refresh', { refreshToken });
+            const response = await axios.post(`${BASE_URL}/api/v1/auth/refresh`, { refreshToken });
             const { accessToken } = response.data.data;
             if (accessToken) {
               localStorage.setItem('serviceToken', accessToken);
@@ -148,7 +148,8 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
   }, [dispatch, state.isLoggedIn]);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/v1/auth/login', { email, password });
+    const response = await axios.post(`${BASE_URL}/api/v1/auth/login`, { email, password });
+    console.log(response);
     const { accessToken, refreshToken } = response.data.data;
     console.log(accessToken, refreshToken);
     localStorage.setItem('refreshToken', refreshToken);
@@ -161,7 +162,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
 
   const register = async (email: string, password: string, firstName: string, lastName: string) => {
     const id = chance.bb_pin();
-    const response = await axios.post('/api/account/register', { id, email, password, firstName, lastName });
+    const response = await axios.post(`${BASE_URL}/api/account/register`, { id, email, password, firstName, lastName });
     let users = response.data;
 
     if (window.localStorage.getItem('users')) {
@@ -180,7 +181,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
 
   const forgotPassword = async (email: string): Promise<[boolean, string?]> => {
     try {
-      const response = await axios.post('/api/v1/auth/forgot-password', { email });
+      const response = await axios.post(`${BASE_URL}/api/v1/auth/forgot-password`, { email });
       const { success } = response.data;
       if (success === true) {
         dispatch({ type: FORGOT_PASSWORD, payload: { isLoggedIn: false, email } });
@@ -199,7 +200,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
       if (!email) {
         return [false, 'Hata Oluştu'];
       }
-      const response = await axios.post('/api/v1/auth/confirm-reset-password-code', { email, code });
+      const response = await axios.post(`${BASE_URL}/api/v1/auth/confirm-reset-password-code`, { email, code });
       const { token } = response.data.data;
       if (token) {
         dispatch({ type: FORGOT_PASSWORD, payload: { isLoggedIn: false, email, token, verified: true } });
@@ -218,7 +219,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
       return [false, 'token error'];
     }
 
-    const response = await axios.post('/api/v1/auth/reset-password', { token, password });
+    const response = await axios.post(`${BASE_URL}/api/v1/auth/reset-password`, { token, password });
     const { success } = response.data;
     if (success) {
       dispatch({ type: FORGOT_PASSWORD, payload: { isLoggedIn: false, email: state.email, token: '', verified: false } });
@@ -231,7 +232,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
   const updateProfile = () => {};
 
   if (state.isInitialized !== undefined && !state.isInitialized) {
-    return "UnAuthorized";
+    return "Loading!";
   }
 
   return (

@@ -6,7 +6,6 @@ import UnitedStatesMap from "../views/Dashboard/UnitedStatesMap";
 import UsersCharts from "../views/Dashboard/UsersCharts";
 import SocialWidgets from "../views/Dashboard/SocialWidgets";
 import RecentUsers from "../views/Dashboard/RecentUsers";
-import RecentTableData from "../views/Dashboard/RecentTableData";
 import AuthGuard from "../utils/route-guard/authGuard";
 
 const Dashboard = () => {
@@ -19,7 +18,6 @@ const Dashboard = () => {
           <UsersCharts />
           <SocialWidgets socialWidgetsData={socialWidgetsData} />
           <RecentUsers />
-          <RecentTableData />
         </Row>
       </AuthGuard>
     </>

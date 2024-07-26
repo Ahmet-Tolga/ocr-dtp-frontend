@@ -29,7 +29,7 @@ const LoginPage = () => {
                             <CardBody>
                                 <form onSubmit={handleLogin}>
                                     <h4 className="f-w-500 mb-1" style={{ marginBottom: "25px" }}>Login with your email</h4>
-                                    <p className="mb-3" style={{ marginBottom: "25px" }}>Don&apos;t have an Account? <Link to="/register" className="link-primary ms-1">Create Account</Link></p>
+                                    <p className="mb-3" style={{ marginBottom: "25px" }}>Don&apos;t have an Account? <Link to="/offer" className="link-primary ms-1">Create a new project</Link></p>
                                     <div className="mb-3" style={{ marginBottom: "25px" }}>
                                         <input 
                                             type="email" 

@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createProjectThunk, uploadFileThunk, associateFileWithProjectThunk } from '../Thunks/UploadProjectThunk';
+import {
+    createProjectThunk,
+    createLoginedProjectThunk, // Yeni thunk'u import edin
+    uploadFileThunk,
+    associateFileWithProjectThunk,
+    GetAllProjectsThunk,
+    GetProjectsByUserIDThunk
+} from '../Thunks/UploadProjectThunk';
 
 interface ProjectState {
     email: string;
@@ -10,7 +17,7 @@ interface ProjectState {
 }
 
 const initialState: ProjectState = {
-    email:"",
+    email: "",
     projects: [],
     files: [],
     loading: false,
@@ -32,6 +39,18 @@ const projectSlice = createSlice({
                 state.loading = false;
             })
             .addCase(createProjectThunk.rejected, (state, action: PayloadAction<any>) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(createLoginedProjectThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createLoginedProjectThunk.fulfilled, (state, action: PayloadAction<any>) => {
+                state.projects.push(action.payload);
+                state.loading = false;
+            })
+            .addCase(createLoginedProjectThunk.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
                 state.error = action.payload;
             })
@@ -59,6 +78,30 @@ const projectSlice = createSlice({
                 state.loading = false;
             })
             .addCase(associateFileWithProjectThunk.rejected, (state, action: PayloadAction<any>) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(GetAllProjectsThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(GetAllProjectsThunk.fulfilled, (state, action: PayloadAction<any[]>) => {
+                state.projects = action.payload;
+                state.loading = false;
+            })
+            .addCase(GetAllProjectsThunk.rejected, (state, action: PayloadAction<any>) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(GetProjectsByUserIDThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(GetProjectsByUserIDThunk.fulfilled, (state, action: PayloadAction<any[]>) => {
+                state.projects = action.payload;
+                state.loading = false;
+            })
+            .addCase(GetProjectsByUserIDThunk.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
                 state.error = action.payload;
             });

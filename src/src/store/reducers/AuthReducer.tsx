@@ -13,7 +13,7 @@ export const initialState: AuthProps = {
 
 // ==============================|| AUTH REDUCER ||============================== //
 
-const auth = (state = initialState, action: AuthActionProps) => {
+const authReducer = (state = initialState, action: AuthActionProps) => {
   switch (action.type) {
     case REGISTER: {
       const { user } = action.payload!;
@@ -65,4 +65,4 @@ const auth = (state = initialState, action: AuthActionProps) => {
   }
 };
 
-export default auth;
+export default authReducer;
