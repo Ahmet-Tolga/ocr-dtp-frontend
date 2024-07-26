@@ -3,12 +3,14 @@ import offerReducer from './reducers/OfferReducer';
 import fileReducer from './reducers/FileReducer';
 import uploadFileReducer from './reducers/UploadFileReducer';
 import uploadProjectReducer from './reducers/UploadProjectReducer';
+import ProposalReducer from './reducers/ProposalReducer';
 
 const rootReducer = combineReducers({
   offer: offerReducer,
   file: fileReducer,
   uploadFile: uploadFileReducer,
-  projects: uploadProjectReducer
+  projects: uploadProjectReducer,
+  proposal:ProposalReducer
 });
 
 const store = configureStore({
