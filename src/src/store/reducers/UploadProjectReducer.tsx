@@ -5,7 +5,9 @@ import {
     uploadFileThunk,
     associateFileWithProjectThunk,
     GetAllProjectsThunk,
-    GetProjectsByUserIDThunk
+    GetProjectsByUserIDThunk,
+    GetAllCurrentProjectsThunk,
+    GetCurentProjectsByUserIdThunk
 } from '../Thunks/UploadProjectThunk';
 
 interface ProjectState {
@@ -102,6 +104,30 @@ const projectSlice = createSlice({
                 state.loading = false;
             })
             .addCase(GetProjectsByUserIDThunk.rejected, (state, action: PayloadAction<any>) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(GetAllCurrentProjectsThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(GetAllCurrentProjectsThunk.fulfilled, (state, action: PayloadAction<any[]>) => {
+                state.projects = action.payload;
+                state.loading = false;
+            })
+            .addCase(GetAllCurrentProjectsThunk.rejected, (state, action: PayloadAction<any>) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(GetCurentProjectsByUserIdThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(GetCurentProjectsByUserIdThunk.fulfilled, (state, action: PayloadAction<any[]>) => {
+                state.projects = action.payload;
+                state.loading = false;
+            })
+            .addCase(GetCurentProjectsByUserIdThunk.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
                 state.error = action.payload;
             });

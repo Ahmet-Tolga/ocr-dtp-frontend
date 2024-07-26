@@ -1,0 +1,23 @@
+.loading-container {
+    height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.loading-content {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+    width: 4rem;
+    height: 4rem;
+    border-width: 0.5rem;
+    border-color: #007bff transparent transparent transparent;
+}
+
+.loading-spinner::before {
+    border-color: #007bff transparent transparent transparent;
+    border-width: 0.5rem;
+}

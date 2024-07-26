@@ -1,19 +1,46 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { userCard } from "../../Common/jsonData";
 import BaseNavbar from "../Common/components/BaseComponent";
 import AuthGuard from "../utils/route-guard/authGuard";
 import useAuth from "../hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { GetAllCurrentProjectsThunk, GetCurentProjectsByUserIdThunk } from "../store/Thunks/UploadProjectThunk";
+import { AppDispatch } from "../store/store";
 
 
 const UserCards = () => {
-    const {user}=useAuth();
+    const { user } = useAuth();
+    const [projects, setProjects] = useState<any[]>([]);
+    const dispatch=useDispatch<AppDispatch>();
 
-    useEffect(()=>{
-      console.log(user);
-    },[user]);
-    
-    
+    useEffect(() => {
+        console.log(user);
+
+        const fetchProjects = async () => {
+            try {
+                if(user?.role==="admin"){
+                    const projects=await dispatch(GetAllCurrentProjectsThunk()).unwrap();
+                    setProjects(projects.data);
+                    console.log("current projects=",projects);
+                }
+                else if(user?.id){
+                    const projects=await dispatch(GetCurentProjectsByUserIdThunk(user?.id)).unwrap();
+                    setProjects(projects.data);
+                    console.log("current projects=",projects);
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error("Failed to fetch projects:", error.message);
+                } else {
+                    console.error("An unknown error occurred");
+                }
+            }
+        }
+        fetchProjects();
+    }, [user]);
+
+
     return (
         <React.Fragment>
             <AuthGuard>
@@ -21,7 +48,7 @@ const UserCards = () => {
                     <BaseNavbar NavbarTitle="All Projects"></BaseNavbar>
                     <Row>
                         {
-                            (userCard || [])?.map((item: any, index: number) => (
+                            projects?.map((item: any, index: number) => (
                                 <Col md={6} xl={4} key={index}>
                                     <Card className="user-card">
                                         <Card.Body>

@@ -10,6 +10,7 @@ import axios from '../utils/axios';
 import { BASE_URL } from '../utils/axios';
 import { KeyedObject } from "../store/Types/Root";
 import { AuthProps, JWTContextType } from '../store/Types/AuthType';
+import AdvancedLoadingPage from '../Loading/Loading';
 // import Loading from '../Loading/Loading';
 
 const chance = new Chance();
@@ -232,7 +233,7 @@ export const JWTProvider = ({ children }: { children: ReactElement }) => {
   const updateProfile = () => {};
 
   if (state.isInitialized !== undefined && !state.isInitialized) {
-    return "Loading!";
+    return <AdvancedLoadingPage></AdvancedLoadingPage>;
   }
 
   return (

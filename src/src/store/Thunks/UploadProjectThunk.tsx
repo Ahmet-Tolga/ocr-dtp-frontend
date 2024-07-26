@@ -90,11 +90,35 @@ export const GetAllProjectsThunk = createAsyncThunk(
     }
 );
 
+export const GetAllCurrentProjectsThunk = createAsyncThunk(
+    'projects/GetAllCurrentProjects',
+    async () => {
+        try {
+            const response = await axios.get(`/api/v1/project`, { params: { "relations": "user", "filter.status": "accepted" } });
+            return response.data;
+        } catch (error: any) {
+            return error.response.data
+        }
+    }
+);
+
 export const GetProjectsByUserIDThunk = createAsyncThunk(
     'projects/getProjectByUserId',
     async (userId: string, { rejectWithValue }) => {
         try {
             const response = await axios.get(`/api/v1/project/`, { params: { "user.id": userId, "relations": "user" } });
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const GetCurentProjectsByUserIdThunk = createAsyncThunk(
+    'projects/GetCurentProjectsByUserId',
+    async (userId: string, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`/api/v1/project/`, { params: { "user.id": userId, "relations": "user" ,"filter.status":"accepted"} });
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response.data);
